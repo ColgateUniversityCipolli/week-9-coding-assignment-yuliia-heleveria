@@ -52,7 +52,7 @@ alpha.MLE <- MLE.gamma$par[1]
 beta.MLE <- MLE.gamma$par[2]
 
 ################################################################################
-# Question 2a:  MLEs using a Log-Normal distribution
+# Question 1b:  MLEs using a Log-Normal distribution
 ################################################################################
 #Function to compute Maximum Likelihood
 lllognorm <- function(par, data, neg = F){
@@ -76,5 +76,24 @@ mu.MLE <- MLE.lognorm$par[1]
 sigma.MLE <- MLE.lognorm$par[2]
 
 ################################################################################
-# Question 3a: Compare the Weibull and the Gamma distribution
+# Question 1c: Compare the Weibull and the Gamma distribution
+################################################################################
+#compute log-likelihood for Gamma distribution
+Gamma.loglik <- llgamma(par = c(alpha.MLE, beta.MLE), data = dat.precip.long$Precipitation, neg = T)
+
+#compute the likelihood ratio
+Weibull.loglik <- 2166.496
+q.gamma.weibull <- Weibull.loglik/Gamma.loglik
+
+################################################################################
+# Question 1d: Compare the Weibull and the Log-Normal distribution
+################################################################################
+#compute log-likelihood for Log-Normal distribution
+Lognorm.loglik <- lllognorm(c(mu.MLE, sigma.MLE), data = dat.precip.long$Precipitation, neg = T)
+
+#compute the likelihood ratio
+q.lognorm.webull <- Weibull.loglik/Lognorm.loglik
+
+################################################################################
+# Question 1e: Compare the Gamma and the Log-Normal distribution
 ################################################################################
