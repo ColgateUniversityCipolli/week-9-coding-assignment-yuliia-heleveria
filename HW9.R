@@ -1,3 +1,7 @@
+#am i computing Q right
+#how to interpret Q
+#do i need to graph anything
+
 ################################################################################
 # HW 9 R CODE
 # YULIIA HELEVERIA
@@ -97,3 +101,5 @@ q.lognorm.webull <- Weibull.loglik/Lognorm.loglik
 ################################################################################
 # Question 1e: Compare the Gamma and the Log-Normal distribution
 ################################################################################
+#compute the likelihood ratio
+q.gamma.lognorm <- Gamma.loglik/Lognorm.loglik
