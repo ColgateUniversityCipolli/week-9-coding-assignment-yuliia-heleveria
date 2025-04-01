@@ -1,5 +1,5 @@
 #why do i get that lognormal is the best
-
+#make sure everything reloads from scartch
 ################################################################################
 # HW 9 R CODE
 # YULIIA HELEVERIA
@@ -81,17 +81,17 @@ sigma.MLE <- MLE.lognorm$par[2]
 # Question 1c: Compare the Weibull and the Gamma distribution
 ################################################################################
 #compute log-likelihood for Gamma distribution
-Gamma.loglik <- llgamma(par = c(alpha.MLE, beta.MLE), data = dat.precip.long$Precipitation, neg = T)
+Gamma.loglik <- llgamma(par = c(alpha.MLE, beta.MLE), data = dat.precip.long$Precipitation, neg = F)
 
 #compute the likelihood ratio
-Weibull.loglik <- 2166.496
+Weibull.loglik <- -2166.496
 q.gamma.weibull <- exp(Weibull.loglik-Gamma.loglik)
 
 ################################################################################
 # Question 1d: Compare the Weibull and the Log-Normal distribution
 ################################################################################
 #compute log-likelihood for Log-Normal distribution
-Lognorm.loglik <- lllognorm(c(mu.MLE, sigma.MLE), data = dat.precip.long$Precipitation, neg = T)
+Lognorm.loglik <- lllognorm(c(mu.MLE, sigma.MLE), data = dat.precip.long$Precipitation, neg = F)
 
 #compute the likelihood ratio
 q.lognorm.webull <- exp(Weibull.loglik-Lognorm.loglik)
@@ -135,7 +135,7 @@ ggdat.lognorm <- tibble(x = seq(0,15,length.out=1000)) |>
   mutate(pdf.mle = dlnorm(x=x, meanlog =mu.MLE, sdlog = sigma.MLE))
 
 #Make a histogram with MLEs of three distributions superimposed
-ggplot() +
+hist.dist <- ggplot() +
   geom_histogram(data=dat.precip.long,
                  aes(x=Precipitation, y=after_stat(density)),
                  breaks=seq(0, 15, 1),
@@ -151,3 +151,6 @@ ggplot() +
   xlab("Precipitation (Inches)")+
   ylab("Density")+
   labs(color="")
+
+#save the plot 
+ggsave("histogram.png", hist.dist, width = 6, height = 6, dpi = 300)

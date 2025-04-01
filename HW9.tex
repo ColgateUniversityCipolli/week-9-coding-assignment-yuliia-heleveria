@@ -196,21 +196,21 @@ We computed the MLEs for these data using a Log-Normal distribution to obtain $\
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
 \hlcom{#compute log-likelihood for Gamma distribution}
-\hldef{Gamma.loglik} \hlkwb{<-} \hlkwd{llgamma}\hldef{(}\hlkwc{par} \hldef{=} \hlkwd{c}\hldef{(alpha.MLE, beta.MLE),} \hlkwc{data} \hldef{= dat.precip.long}\hlopt{$}\hldef{Precipitation,} \hlkwc{neg} \hldef{= T)}
+\hldef{Gamma.loglik} \hlkwb{<-} \hlkwd{llgamma}\hldef{(}\hlkwc{par} \hldef{=} \hlkwd{c}\hldef{(alpha.MLE, beta.MLE),} \hlkwc{data} \hldef{= dat.precip.long}\hlopt{$}\hldef{Precipitation,} \hlkwc{neg} \hldef{= F)}
 
 \hlcom{#compute the likelihood ratio}
-\hldef{Weibull.loglik} \hlkwb{<-} \hlnum{2166.496}
+\hldef{Weibull.loglik} \hlkwb{<-} \hlopt{-}\hlnum{2166.496}
 \hldef{q.gamma.weibull} \hlkwb{<-} \hlkwd{exp}\hldef{(Weibull.loglik}\hlopt{-}\hldef{Gamma.loglik)}
 
 \hlcom{#print Q}
 \hldef{q.gamma.weibull}
 \end{alltt}
 \begin{verbatim}
-## [1] 4626807
+## [1] 2.161318e-07
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
-The likelihood ratio of the Weibull and the Gamma distribution is \ensuremath{4.6268066\times 10^{6}}. Because $Q > 1$ ($Q$ is significantly larger than 1), the numerator provides a better fit for the data than the denominator. Weibull distribution is in the numerator, so it is a better fit according to the likelihood ratio. 
+The likelihood ratio of the Weibull and the Gamma distribution is \ensuremath{2.1613179\times 10^{-7}}. Because $Q < 1$ , the Gamma distribution is a better fit according to the likelihood ratio. 
     \item Compute the likelihood ratio to compare the Weibull and the Log-Normal distribution.
     Which has a better fit according to the likelihood ratio?
     \[Q = \frac{L(\{\hat{a}, \hat{\sigma}\}|\mathbf{x})}{L(\{\hat{\mu}, \hat{\sigma}\}|\mathbf{x})}=e^{\left[\mathcal{L}(\{\hat{a}, \hat{\sigma}\}|\mathbf{x}) - \mathcal{L}(\{\hat{\mu}, \hat{\sigma}\}|\mathbf{x})\right]}\]
@@ -218,7 +218,7 @@ The likelihood ratio of the Weibull and the Gamma distribution is \ensuremath{4.
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
 \hlcom{#compute log-likelihood for Log-Normal distribution}
-\hldef{Lognorm.loglik} \hlkwb{<-} \hlkwd{lllognorm}\hldef{(}\hlkwd{c}\hldef{(mu.MLE, sigma.MLE),} \hlkwc{data} \hldef{= dat.precip.long}\hlopt{$}\hldef{Precipitation,} \hlkwc{neg} \hldef{= T)}
+\hldef{Lognorm.loglik} \hlkwb{<-} \hlkwd{lllognorm}\hldef{(}\hlkwd{c}\hldef{(mu.MLE, sigma.MLE),} \hlkwc{data} \hldef{= dat.precip.long}\hlopt{$}\hldef{Precipitation,} \hlkwc{neg} \hldef{= F)}
 
 \hlcom{#compute the likelihood ratio}
 \hldef{q.lognorm.weibull} \hlkwb{<-} \hlkwd{exp}\hldef{(Weibull.loglik}\hlopt{-}\hldef{Lognorm.loglik)}
@@ -227,11 +227,11 @@ The likelihood ratio of the Weibull and the Gamma distribution is \ensuremath{4.
 \hldef{q.lognorm.weibull}
 \end{alltt}
 \begin{verbatim}
-## [1] 4.218221e-17
+## [1] 2.370668e+16
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
-The likelihood ratio of the Weibull and the Log-Normal distribution is \ensuremath{4.2182211\times 10^{-17}}. Because $Q < 1$ , the denominator provides a better fit for the data than the numerator. Log-Normal distribution is in the denominator, so it is a better fit according to the likelihood ratio. 
+The likelihood ratio of the Weibull and the Log-Normal distribution is \ensuremath{2.3706676\times 10^{16}}. Because $Q > 1$ , the Weibull distribution it is a better fit according to the likelihood ratio. 
 
     \item Compute the likelihood ratio to compare the Gamma and the Log-Normal distribution.
     Which has a better fit according to the likelhiood ratio?
@@ -246,24 +246,21 @@ The likelihood ratio of the Weibull and the Log-Normal distribution is \ensurema
 \hldef{q.gamma.lognorm}
 \end{alltt}
 \begin{verbatim}
-## [1] 9.116917e-24
+## [1] 1.096862e+23
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
-The likelihood ratio of the Gamma and the Log-Normal distribution is \ensuremath{9.1169169\times 10^{-24}}. Because $Q < 1$, the denominator provides a better fit for the data than the numerator. Log-Normal distribution is in the denominator, so it is a better fit according to the likelihood ratio. 
+The likelihood ratio of the Gamma and the Log-Normal distribution is \ensuremath{1.096862\times 10^{23}}. Because $Q > 1$, the Gamma distribution is a better fit according to the likelihood ratio. 
   \end{enumerate}
-  \item Optional Coding Challenge. Choose the ``best" distribution and refit the
-  model by season.
-  \begin{enumerate}
-    \item Fit the Distribution for Winter (December-February).
-    \item Fit the Distribution for Spring (March-May).
-    \item Fit the Distribution for Summer (June-August).
-    \item Fit the Distribution for Fall (September-November).
-    \item Plot the four distributions in one plot using \texttt{cyan3} for Winter,
-    \texttt{chartreuse3} for Spring, \texttt{red3} for Summer, and \texttt{chocolate3}
-    for Fall. Note any similarities/differences you observe across the seasons.
-  \end{enumerate}
+
 \end{enumerate}
+
+\begin{figure}
+ \centering
+ \includegraphics[width=0.5\textwidth]{histogram.png}
+ \caption{Superimposed distributions onto the percipitation data}
+ \label{fig:label}
+\end{figure}
 
 \bibliography{bibliography}
 \end{document}
