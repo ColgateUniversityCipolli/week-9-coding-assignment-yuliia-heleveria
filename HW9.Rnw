@@ -40,7 +40,7 @@ which \texttt{R} cannot differentiate from 0.
   another right-skewed distribution like the Gamma (see Lecture 15), or
   the Log-Normal (see Lecture 17).
   
-  <<message=F, warning=F>>=
+  <<message=F, warning=F, size = 'scriptsize'>>=
 # Load and clean data about precipitation in Madison County
 dat.precip <- read_csv(file = "agacis.csv")
 
@@ -58,7 +58,7 @@ dat.precip.long <- dat.precip |>
 @
 \begin{enumerate}
     \item Compute the MLEs for these data using a Gamma distribution.
-    <<message=F, warning=F>>=
+    <<message=F, warning=F, size = 'scriptsize'>>=
 #Function to compute Maximum Likelihood
 llgamma <- function(par, data, neg = F){
   alpha <- par[1] #get alpha and beta
@@ -86,7 +86,7 @@ beta.MLE
 @
 We computed the MLEs for these data using a Gamma distribution to obtain $\alpha = \Sexpr{alpha.MLE}$ and $\beta = \Sexpr{beta.MLE}$.
     \item Compute the MLEs for these data using the Log-Normal distribution.
-    <<message=F, warning=F>>=
+    <<message=F, warning=F, size = 'scriptsize'>>=
 #Function to compute Maximum Likelihood
 lllognorm <- function(par, data, neg = F){
   mu <- par[1] #get mu and sigma
@@ -116,39 +116,39 @@ We computed the MLEs for these data using a Log-Normal distribution to obtain $\
     \item Compute the likelihood ratio to compare the Weibull and the Gamma distribution. 
     Which has a better fit according to the likelhiood ratio?
     \[Q = \frac{L(\{\hat{a}, \hat{\sigma}\}|\mathbf{x})}{L(\{\hat{\alpha}, \hat{\beta}\}|\mathbf{x})}=e^{\left[\mathcal{L}(\{\hat{a}, \hat{\sigma}\}|\mathbf{x}) - \mathcal{L}(\{\hat{\alpha}, \hat{\beta}\}|\mathbf{x})\right]}\]
-    <<message=F, warning=F>>=
+    <<message=F, warning=F, size = 'scriptsize'>>=
 #compute log-likelihood for Gamma distribution
 Gamma.loglik <- llgamma(par = c(alpha.MLE, beta.MLE), data = dat.precip.long$Precipitation, neg = T)
 
 #compute the likelihood ratio
 Weibull.loglik <- 2166.496
-q.gamma.weibull <- Weibull.loglik/Gamma.loglik
+q.gamma.weibull <- exp(Weibull.loglik-Gamma.loglik)
 
 #print Q
 q.gamma.weibull
 @
-The likelihood ratio of the Weibull and the Gamma distribution is \Sexpr{q.gamma.weibull}. Because $Q > 1$, the numerator provides a better fit for the data than the denominator. Weibull distribution is in the numerator, so it is a better fit according to the likelihood ratio. 
+The likelihood ratio of the Weibull and the Gamma distribution is \Sexpr{q.gamma.weibull}. Because $Q > 1$ ($Q$ is significantly larger than 1), the numerator provides a better fit for the data than the denominator. Weibull distribution is in the numerator, so it is a better fit according to the likelihood ratio. 
     \item Compute the likelihood ratio to compare the Weibull and the Log-Normal distribution.
     Which has a better fit according to the likelihood ratio?
     \[Q = \frac{L(\{\hat{a}, \hat{\sigma}\}|\mathbf{x})}{L(\{\hat{\mu}, \hat{\sigma}\}|\mathbf{x})}=e^{\left[\mathcal{L}(\{\hat{a}, \hat{\sigma}\}|\mathbf{x}) - \mathcal{L}(\{\hat{\mu}, \hat{\sigma}\}|\mathbf{x})\right]}\]
-    <<message=F, warning=F>>=
+    <<message=F, warning=F, size = 'scriptsize'>>=
 #compute log-likelihood for Log-Normal distribution
 Lognorm.loglik <- lllognorm(c(mu.MLE, sigma.MLE), data = dat.precip.long$Precipitation, neg = T)
 
 #compute the likelihood ratio
-q.lognorm.weibull <- Weibull.loglik/Lognorm.loglik
+q.lognorm.weibull <- exp(Weibull.loglik-Lognorm.loglik)
 
 #print Q
 q.lognorm.weibull
 @
-The likelihood ratio of the Weibull and the Log-Normal distribution is \Sexpr{q.lognorm.weibull}. Because $Q < 1$, the denominator provides a better fit for the data than the numerator. Log-Normal distribution is in the denominator, so it is a better fit according to the likelihood ratio. 
+The likelihood ratio of the Weibull and the Log-Normal distribution is \Sexpr{q.lognorm.weibull}. Because $Q < 1$ , the denominator provides a better fit for the data than the numerator. Log-Normal distribution is in the denominator, so it is a better fit according to the likelihood ratio. 
 
     \item Compute the likelihood ratio to compare the Gamma and the Log-Normal distribution.
     Which has a better fit according to the likelhiood ratio?
     \[Q = \frac{L(\{\hat{\alpha}, \hat{\beta}\}|\mathbf{x})}{L(\{\hat{\mu}, \hat{\sigma}\}|\mathbf{x})}=e^{\left[\mathcal{L}(\{\hat{\alpha}, \hat{\beta}\}|\mathbf{x}) - \mathcal{L}(\{\hat{\mu}, \hat{\sigma}\}|\mathbf{x})\right]}\]
-    <<message=F, warning=F>>=
+    <<message=F, warning=F, size = 'scriptsize'>>=
 #compute the likelihood ratio
-q.gamma.lognorm <- Gamma.loglik/Lognorm.loglik
+q.gamma.lognorm <- exp(Gamma.loglik-Lognorm.loglik)
 
 #print Q
 q.gamma.lognorm
