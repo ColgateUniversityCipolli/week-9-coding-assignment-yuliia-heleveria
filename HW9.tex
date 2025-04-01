@@ -87,18 +87,170 @@ which \texttt{R} cannot differentiate from 0.
   \item Someone asked ``why Weibull?" in class. That is, why wouldn't we use 
   another right-skewed distribution like the Gamma (see Lecture 15), or
   the Log-Normal (see Lecture 17).
-  \begin{enumerate}
-    \item Compute the MLEs for these data using a Gamma distribution. 
+  
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlcom{# Load and clean data about precipitation in Madison County}
+\hldef{dat.precip} \hlkwb{<-} \hlkwd{read_csv}\hldef{(}\hlkwc{file} \hldef{=} \hlsng{"agacis.csv"}\hldef{)}
+
+\hldef{dat.precip.long} \hlkwb{<-} \hldef{dat.precip |>}
+\hldef{dplyr}\hlopt{::}\hlkwd{select}\hldef{(}\hlopt{-}\hldef{Annual) |>}                   \hlcom{# Remove annual column }
+\hlkwd{pivot_longer}\hldef{(}\hlkwc{cols} \hldef{=} \hlkwd{c}\hldef{(Jan, Feb, Mar, Apr,}   \hlcom{# pivot the column data into one col}
+                      \hldef{May, Jun, Jul, Aug,}
+                      \hldef{Sep, Oct, Nov, Dec),}
+             \hlkwc{values_to} \hldef{=} \hlsng{"Precipitation"}\hldef{,}   \hlcom{# store the values in Precipitation}
+             \hlkwc{names_to} \hldef{=} \hlsng{"Month"}\hldef{) |>}         \hlcom{# store the months in Month}
+\hlcom{#switch 'M' to NA values and convert numbers to integers from Strings}
+\hlkwd{mutate}\hldef{(}\hlkwc{Precipitation} \hldef{=} \hlkwd{case_when}\hldef{(Precipitation} \hlopt{==} \hlsng{"M"} \hlopt{~} \hlnum{NA_character_}\hldef{,}
+                                 \hlnum{TRUE}                 \hlopt{~} \hldef{Precipitation))|>}
+\hlkwd{mutate}\hldef{(}\hlkwc{Precipitation} \hldef{=} \hlkwd{as.numeric}\hldef{(Precipitation))}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+\begin{enumerate}
+    \item Compute the MLEs for these data using a Gamma distribution.
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlcom{#Function to compute Maximum Likelihood}
+\hldef{llgamma} \hlkwb{<-} \hlkwa{function}\hldef{(}\hlkwc{par}\hldef{,} \hlkwc{data}\hldef{,} \hlkwc{neg} \hldef{= F)\{}
+  \hldef{alpha} \hlkwb{<-} \hldef{par[}\hlnum{1}\hldef{]} \hlcom{#get alpha and beta}
+  \hldef{beta} \hlkwb{<-} \hldef{par[}\hlnum{2}\hldef{]}
+
+  \hlcom{#compute log likelihood}
+  \hldef{loglik} \hlkwb{<-} \hlkwd{sum}\hldef{(}\hlkwd{log}\hldef{(}\hlkwd{dgamma}\hldef{(}\hlkwc{x} \hldef{= data,} \hlkwc{shape} \hldef{= alpha,} \hlkwc{rate} \hldef{= beta)),} \hlkwc{na.rm} \hldef{= T)}
+
+  \hlkwd{return}\hldef{(}\hlkwd{ifelse}\hldef{(neg,} \hlopt{-} \hldef{loglik, loglik))}
+\hldef{\}}
+
+\hlcom{#Compute MLE }
+\hldef{MLE.gamma} \hlkwb{<-} \hlkwd{optim}\hldef{(}\hlkwc{par} \hldef{=} \hlkwd{c}\hldef{(}\hlnum{1}\hldef{,}\hlnum{1}\hldef{),}
+               \hlkwc{fn} \hldef{= llgamma,}
+               \hlkwc{data}\hldef{=dat.precip.long}\hlopt{$}\hldef{Precipitation,}
+               \hlkwc{neg}\hldef{=T)}
+
+\hlcom{#extract alpha and beta}
+\hldef{alpha.MLE} \hlkwb{<-} \hldef{MLE.gamma}\hlopt{$}\hldef{par[}\hlnum{1}\hldef{]}
+\hldef{beta.MLE} \hlkwb{<-} \hldef{MLE.gamma}\hlopt{$}\hldef{par[}\hlnum{2}\hldef{]}
+
+\hlcom{#print the values}
+\hldef{alpha.MLE}
+\end{alltt}
+\begin{verbatim}
+## [1] 4.174581
+\end{verbatim}
+\begin{alltt}
+\hldef{beta.MLE}
+\end{alltt}
+\begin{verbatim}
+## [1] 1.189099
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+We computed the MLEs for these data using a Gamma distribution to obtain $\alpha = 4.1745814$ and $\beta = 1.1890993$.
     \item Compute the MLEs for these data using the Log-Normal distribution.
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlcom{#Function to compute Maximum Likelihood}
+\hldef{lllognorm} \hlkwb{<-} \hlkwa{function}\hldef{(}\hlkwc{par}\hldef{,} \hlkwc{data}\hldef{,} \hlkwc{neg} \hldef{= F)\{}
+  \hldef{mu} \hlkwb{<-} \hldef{par[}\hlnum{1}\hldef{]} \hlcom{#get mu and sigma}
+  \hldef{sigma} \hlkwb{<-} \hldef{par[}\hlnum{2}\hldef{]}
+
+  \hlcom{#compute log likelihood}
+  \hldef{loglik} \hlkwb{<-} \hlkwd{sum}\hldef{(}\hlkwd{log}\hldef{(}\hlkwd{dlnorm}\hldef{(}\hlkwc{x} \hldef{= data,} \hlkwc{meanlog} \hldef{= mu,} \hlkwc{sdlog} \hldef{= sigma)),} \hlkwc{na.rm} \hldef{= T)}
+
+  \hlkwd{return}\hldef{(}\hlkwd{ifelse}\hldef{(neg,} \hlopt{-} \hldef{loglik, loglik))}
+\hldef{\}}
+
+\hlcom{#Compute MLE }
+\hldef{MLE.lognorm} \hlkwb{<-} \hlkwd{optim}\hldef{(}\hlkwc{par} \hldef{=} \hlkwd{c}\hldef{(}\hlnum{1}\hldef{,}\hlnum{1}\hldef{),}
+               \hlkwc{fn} \hldef{= lllognorm,}
+               \hlkwc{data}\hldef{=dat.precip.long}\hlopt{$}\hldef{Precipitation,}
+               \hlkwc{neg}\hldef{=T)}
+
+\hlcom{#extract alpha and beta}
+\hldef{mu.MLE} \hlkwb{<-} \hldef{MLE.lognorm}\hlopt{$}\hldef{par[}\hlnum{1}\hldef{]}
+\hldef{sigma.MLE} \hlkwb{<-} \hldef{MLE.lognorm}\hlopt{$}\hldef{par[}\hlnum{2}\hldef{]}
+
+\hlcom{#print the values}
+\hldef{mu.MLE}
+\end{alltt}
+\begin{verbatim}
+## [1] 1.131261
+\end{verbatim}
+\begin{alltt}
+\hldef{sigma.MLE}
+\end{alltt}
+\begin{verbatim}
+## [1] 0.5333417
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+We computed the MLEs for these data using a Log-Normal distribution to obtain $\mu = 1.1312609$ and $\sigma = 0.5333417$.
     \item Compute the likelihood ratio to compare the Weibull and the Gamma distribution. 
     Which has a better fit according to the likelhiood ratio?
     \[Q = \frac{L(\{\hat{a}, \hat{\sigma}\}|\mathbf{x})}{L(\{\hat{\alpha}, \hat{\beta}\}|\mathbf{x})}=e^{\left[\mathcal{L}(\{\hat{a}, \hat{\sigma}\}|\mathbf{x}) - \mathcal{L}(\{\hat{\alpha}, \hat{\beta}\}|\mathbf{x})\right]}\]
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlcom{#compute log-likelihood for Gamma distribution}
+\hldef{Gamma.loglik} \hlkwb{<-} \hlkwd{llgamma}\hldef{(}\hlkwc{par} \hldef{=} \hlkwd{c}\hldef{(alpha.MLE, beta.MLE),} \hlkwc{data} \hldef{= dat.precip.long}\hlopt{$}\hldef{Precipitation,} \hlkwc{neg} \hldef{= T)}
+
+\hlcom{#compute the likelihood ratio}
+\hldef{Weibull.loglik} \hlkwb{<-} \hlnum{2166.496}
+\hldef{q.gamma.weibull} \hlkwb{<-} \hldef{Weibull.loglik}\hlopt{/}\hldef{Gamma.loglik}
+
+\hlcom{#print Q}
+\hldef{q.gamma.weibull}
+\end{alltt}
+\begin{verbatim}
+## [1] 1.007135
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+The likelihood ratio of the Weibull and the Gamma distribution is 1.0071345. Because $Q > 1$, the numerator provides a better fit for the data than the denominator. Weibull distribution is in the numerator, so it is a better fit according to the likelihood ratio. 
     \item Compute the likelihood ratio to compare the Weibull and the Log-Normal distribution.
     Which has a better fit according to the likelihood ratio?
     \[Q = \frac{L(\{\hat{a}, \hat{\sigma}\}|\mathbf{x})}{L(\{\hat{\mu}, \hat{\sigma}\}|\mathbf{x})}=e^{\left[\mathcal{L}(\{\hat{a}, \hat{\sigma}\}|\mathbf{x}) - \mathcal{L}(\{\hat{\mu}, \hat{\sigma}\}|\mathbf{x})\right]}\]
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlcom{#compute log-likelihood for Log-Normal distribution}
+\hldef{Lognorm.loglik} \hlkwb{<-} \hlkwd{lllognorm}\hldef{(}\hlkwd{c}\hldef{(mu.MLE, sigma.MLE),} \hlkwc{data} \hldef{= dat.precip.long}\hlopt{$}\hldef{Precipitation,} \hlkwc{neg} \hldef{= T)}
+
+\hlcom{#compute the likelihood ratio}
+\hldef{q.lognorm.weibull} \hlkwb{<-} \hldef{Weibull.loglik}\hlopt{/}\hldef{Lognorm.loglik}
+
+\hlcom{#print Q}
+\hldef{q.lognorm.weibull}
+\end{alltt}
+\begin{verbatim}
+## [1] 0.9828942
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+The likelihood ratio of the Weibull and the Log-Normal distribution is 0.9828942. Because $Q < 1$, the denominator provides a better fit for the data than the numerator. Log-Normal distribution is in the denominator, so it is a better fit according to the likelihood ratio. 
+
     \item Compute the likelihood ratio to compare the Gamma and the Log-Normal distribution.
     Which has a better fit according to the likelhiood ratio?
     \[Q = \frac{L(\{\hat{\alpha}, \hat{\beta}\}|\mathbf{x})}{L(\{\hat{\mu}, \hat{\sigma}\}|\mathbf{x})}=e^{\left[\mathcal{L}(\{\hat{\alpha}, \hat{\beta}\}|\mathbf{x}) - \mathcal{L}(\{\hat{\mu}, \hat{\sigma}\}|\mathbf{x})\right]}\]
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlcom{#compute the likelihood ratio}
+\hldef{q.gamma.lognorm} \hlkwb{<-} \hldef{Gamma.loglik}\hlopt{/}\hldef{Lognorm.loglik}
+
+\hlcom{#print Q}
+\hldef{q.gamma.lognorm}
+\end{alltt}
+\begin{verbatim}
+## [1] 0.9759315
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+The likelihood ratio of the Gamma and the Log-Normal distribution is 0.9759315. Because $Q < 1$, the denominator provides a better fit for the data than the numerator. Log-Normal distribution is in the denominator, so it is a better fit according to the likelihood ratio. 
   \end{enumerate}
   \item Optional Coding Challenge. Choose the ``best" distribution and refit the
   model by season.

@@ -1,5 +1,4 @@
-#am i computing Q right
-#how to interpret Q
+#am i computing and interpreting Q right
 #do i need to graph anything
 
 ################################################################################
@@ -11,7 +10,7 @@
 ################################################################################
 # Load libraries
 ################################################################################
-#library(nleqslv)
+library(tidyverse)
 
 ################################################################################
 # Load and clean data about precipitation in Madison County
